@@ -86,7 +86,7 @@
 
                                 } else if (type == 'set') {
 
-                                    result[db][key] = [];
+                                    result[db][key] = {};
 
                                     wait++;
 
@@ -103,7 +103,7 @@
 
                                             members.forEach(function(member, i) {
 
-                                                result[db][key].push(member);
+                                                result[db][key][member] = true;
 
                                             });
 
@@ -122,7 +122,51 @@
 
                                 } else if (type == 'list') {
 
-                                    // TODO
+                                    result[db][key] = [];
+
+                                    wait++;
+
+                                    client.llen(key, function(err, listLength) {
+
+                                        wait--;
+
+                                        if (err) {
+
+                                            console.log("Unable to get length of list",
+                                                key, ":", err);
+
+                                            if (!wait) next();
+
+                                        } else {
+
+                                            wait++;
+
+                                            client.lrange(key, 0, listLength - 1, function(err, elements) {
+
+                                                wait--;
+
+                                                if (err) {
+
+                                                    console.log("Unable to get elements of list",
+                                                        key, ":", err);
+
+                                                } else {
+
+                                                    elements.forEach(function(element, i) {
+
+                                                        result[db][key].push(element);
+
+                                                    });
+
+                                                }
+
+                                                if (!wait) next();
+
+                                            });
+
+                                        }
+
+                                    });
 
                                 } else if (type == 'string') {
 
@@ -149,11 +193,93 @@
 
                                 } else if (type == 'hash') {
 
-                                    // TODO
+                                    wait++;
+
+                                    client.hgetall(key, function(err, map) {
+
+                                        wait--;
+
+                                        if (err) {
+
+                                            console.log("Unable to get hash map",
+                                                key, ":", err);
+
+                                        } else {
+
+                                            result[db][key] = map;
+
+                                        }
+
+                                        if (!wait) next();
+
+                                    });
 
                                 } else if (type == 'zset') {
 
-                                    // TODO (sorted set)
+                                    result[db][key] = {};
+
+                                    wait++;
+
+                                    client.zcard(key, function(err, zsetSize) {
+
+                                        wait--;
+
+                                        if (err) {
+
+                                            console.log("Unable to get size of sorted set",
+                                                key, ":", err);
+
+                                            if (!wait) next();
+
+                                        } else {
+
+                                            wait++;
+
+                                            client.zrange(key, 0, zsetSize - 1, function(err, members) {
+
+                                                wait--;
+
+                                                if (err) {
+
+                                                    console.log("Unable to get members of sorted set",
+                                                        key, ":", err);
+
+                                                    if (!wait) next();
+
+                                                } else {
+
+                                                    members.forEach(function(member, i) {
+
+                                                        wait++;
+
+                                                        client.zscore(key, member, function(err, score) {
+
+                                                            wait--;
+
+                                                            if (err) {
+
+                                                                console.log("Unable to get score for member",
+                                                                    member, "in sorted set", key, ":", err);
+
+                                                            } else {
+
+                                                                result[db][key][member] = parseFloat(score);
+
+                                                            }
+
+                                                            if (!wait) next();
+
+                                                        });
+
+                                                    });
+
+                                                }
+
+                                            });
+
+                                        }
+
+                                    });
 
                                 }
 
