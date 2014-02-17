@@ -26,9 +26,9 @@ Modify `rConf.js`.
 
 ## Dependencies
 
-1. [NodeJS][http://nodejs.org/]
-2. [Redis][http://redis.io/]
-3. [node_redis][https://github.com/mranney/node_redis]
+1. [NodeJS](http://nodejs.org/)
+2. [Redis](http://redis.io/)
+3. [node_redis](https://github.com/mranney/node_redis)
 
 ## Issues
 
