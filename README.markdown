@@ -33,4 +33,8 @@ Modify `rConf.js`.
 ## Issues
 
 Only Redis sets are dumped.
-Still need to implement lists, hashes, strings and sorted sets.
+Still need to implement [lists][1], [hashes][2] and [sorted sets][3].
+
+[1]:https://github.com/EyalAr/dump-redis/issues/2
+[2]:https://github.com/EyalAr/dump-redis/issues/4
+[3]:https://github.com/EyalAr/dump-redis/issues/3

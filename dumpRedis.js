@@ -94,11 +94,20 @@
 
                                         wait--;
 
-                                        members.forEach(function(member, i) {
+                                        if (err) {
 
-                                            result[db][key].push(member);
+                                            console.log("Unable to get members of set",
+                                                key, ":", err);
 
-                                        });
+                                        } else {
+
+                                            members.forEach(function(member, i) {
+
+                                                result[db][key].push(member);
+
+                                            });
+
+                                        }
 
                                         if (!wait) {
 
@@ -117,7 +126,26 @@
 
                                 } else if (type == 'string') {
 
-                                    // TODO
+                                    wait++;
+
+                                    client.get(key, function(err, value) {
+
+                                        wait--;
+
+                                        if (err) {
+
+                                            console.log("Unable to get value for key",
+                                                key, ":", err);
+
+                                        } else {
+
+                                            result[db][key] = value;
+
+                                        }
+
+                                        if (!wait) next();
+
+                                    });
 
                                 } else if (type == 'hash') {
 
